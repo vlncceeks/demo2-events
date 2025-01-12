@@ -17,9 +17,6 @@ def main():
         # Создание суперпользователя
         if not User.objects.filter(username=superuser).exists():
             User.objects.create_superuser(superuser, 'admin@example.com', 'adminpassword')
-            print("Суперпользователь создан успешно")
-        else:
-            print("Суперпользователь уже существует")
     except ImportError as exc:
         raise ImportError(
             "Couldn't import Django. Are you sure it's installed and "
