@@ -1,26 +1,18 @@
 import os
-import django
-
-# Установите переменную окружения для указания файла настроек Django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
-
-# Инициализация Django
-django.setup()
-
+from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 
+class Command(BaseCommand):
+    help = 'Создает суперпользователя, если его еще нет'
 
-
-
-
-superuser = 'ADMIN'
-
-
-
-
-# Создание суперпользователя
-if not User.objects.filter(username=superuser).exists():
-    User.objects.create_superuser(superuser, 'admin@example.com', 'hMGA9OLntQ')
-    print("Суперпользователь создан успешно")
-else:
-    print("Суперпользователь уже существует")
+    def handle(self, *args, **kwargs):
+        # Проверяем, существует ли суперпользователь
+        if not User.objects.filter(is_superuser=True).exists():
+            User.objects.create_superuser(
+                username=os.environ.get('SUPERUSER_USERNAME', 'admin'),
+                email=os.environ.get('SUPERUSER_EMAIL', 'vlncceeks@gmail.com'),
+                password=os.environ.get('SUPERUSER_PASSWORD', 'adminpassword')
+            )
+            self.stdout.write(self.style.SUCCESS('Суперпользователь был успешно создан!'))
+        else:
+            self.stdout.write(self.style.SUCCESS('Суперпользователь уже существует!'))
